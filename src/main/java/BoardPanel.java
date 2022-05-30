@@ -47,7 +47,7 @@ public class BoardPanel extends JPanel {
 
             }
         });
-        addMouseMotionListener(new MouseMotionListener() {
+        addMouseMotionListener(new MouseMotionListener() { //
             @Override
             public void mouseDragged(MouseEvent e) {
 
@@ -71,7 +71,7 @@ public class BoardPanel extends JPanel {
 
             return null;
         }
-        var x = point.x / getCellLength();
+        var x = point.x / getCellLength(); //
         var y = point.y / getCellLength();
         var position = Position.fromXy(x, y);
 

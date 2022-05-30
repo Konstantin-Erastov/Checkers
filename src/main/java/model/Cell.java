@@ -22,7 +22,7 @@ public class Cell  implements Serializable {
     private Draught draught;
 
     public Cell(Board board, Position position, Color color) {
-//        this.game = game;
+
         this.board = board;
         this.position = position;
         this.color = color;
@@ -37,14 +37,14 @@ public class Cell  implements Serializable {
         return draught == null;
     }
 
-    public Draught removeDraught() {
+    public void removeDraught() {
         if (!hasDraught()) {
             throw new RuntimeException("can't remove null draught");
         }
-        var d = draught;
+
         draught.setCell(null);
         draught = null;
-        return d;
+
     }
 
     public void setDraught(Draught draught) {
@@ -93,7 +93,7 @@ public class Cell  implements Serializable {
 
 
     public Cell getUpperLeftCell(Direction direction) {
-//        var direction = draught.getPlayer().getDirection();
+
         switch (direction) {
             case UP -> {
                 return board.getCell(position.i() - 1, position.j() - 1);
@@ -117,7 +117,7 @@ public class Cell  implements Serializable {
     }
 
     public Cell getDownLeftCell(Direction direction) {
-//        var direction = draught.getPlayer().getDirection();
+
         switch (direction) {
             case UP -> {
                 return board.getCell(position.i() + 1, position.j() - 1);

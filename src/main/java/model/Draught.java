@@ -9,7 +9,6 @@ import java.io.Serializable;
 @Getter
 public class Draught   implements Serializable {
     private final Player player;
-
     @Setter
     private boolean isQueen = false;
 
@@ -21,16 +20,7 @@ public class Draught   implements Serializable {
     }
 
     public void setCell(Cell cell) {
-        if (this.cell != null && cell != null) {
-            throw new RuntimeException("draught already have cell");
-        }
-        if (this.cell == null && cell == null) {
-            throw new RuntimeException("draught already does not have cell");
-        }
         this.cell = cell;
     }
-
-    public boolean hasAvailableMoves() {
-        return cell.hasAvailableMoves();
     }
-}
+

@@ -8,7 +8,7 @@ import java.util.Stack;
 
 public class Move implements Serializable {
 
-    private final Stack<MoveStep> cells = new Stack<>();
+    private final Stack<MoveStep> steps = new Stack<>();
 
     private final Board board;
     @Getter
@@ -20,12 +20,21 @@ public class Move implements Serializable {
     }
 
     public boolean started() {
-        return !cells.empty();
+        return !steps.empty();
 
     }
 
     public Cell getLast() {
-        return cells.lastElement().getCell2();
+        return steps.lastElement().getCell2();
+    }
+
+    public void addFirstStep(Cell cell) {
+        if (started()) {
+            throw new RuntimeException("can't set start cell to started move");
+        }
+        steps.push(new MoveStep(cell));
+
+        cell.setSelected(true);
     }
 
     public MoveStep addStep(Cell cell) {
@@ -37,62 +46,42 @@ public class Move implements Serializable {
             eatenCell = board.getEatenCell(getLast(), cell);
         }
         var step = new MoveStep(getLast(), cell, eatenCell);
-        cells.push(step);
+        steps.push(step);
         cell.setSelected(true);
 
         System.out.println("cell " + cell + " added to move");
         return step;
     }
 
-    public void addFirstStep(Cell cell) {
-        if (started()) {
-            throw new RuntimeException("can't set start cell to started move");
-        }
-        cells.push(new MoveStep(cell));
-
-        cell.setSelected(true);
-    }
-
-
-
-    public boolean canAddStep(Cell cell2) {
-        if (cells.size() == 1) {
-            return getLast().getAvailableMoves().contains(cell2);
-        }
-        return getLast().getAvailableEats().contains(cell2);
-    }
-
     public boolean contains(Cell cell) {
-        return cells.stream().anyMatch(x -> x.getCell2() == cell);
+        return steps.stream().anyMatch(x -> x.getCell2() == cell);
     }
 
     public void undoUntil(Cell cell) {
-        if (!contains(cell)) {
-            throw new RuntimeException("");
-        }
+
         while (true) {
-            var last = cells.peek();
+            var last = steps.peek();
             if (last.getCell2() == cell) {
-                if (cells.size() == 1) {
-                    cells.pop();
+                if (steps.size() == 1) {
+                    steps.pop();
                     last.getCell2().unselect();
                 }
                 break;
             }
-            cells.pop();
+            steps.pop();
             last.getCell2().unselect();
             board.undo(last);
         }
         if (started()) {
-            cells.peek().getCell2().select();
+            steps.peek().getCell2().select();
         }
     }
 
     public void unselectCells() {
-        cells.forEach(x -> x.getCell2().unselect());
+        steps.forEach(x -> x.getCell2().unselect());
     }
 
     public void undo() {
-        undoUntil(cells.firstElement().getCell2());
+        undoUntil(steps.firstElement().getCell2());
     }
 }

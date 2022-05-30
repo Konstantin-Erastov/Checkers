@@ -26,5 +26,6 @@ public class MoveStep implements Serializable {
 
     public void restoreEatenDraught() {
         getEatenCell().setDraught(getEatenDraught());
+        getEatenDraught().getPlayer().getDraughts().add(getEatenDraught());
     }
 }

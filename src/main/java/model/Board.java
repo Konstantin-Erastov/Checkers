@@ -53,7 +53,15 @@ public class Board implements Serializable {
             cell2 = tmp;
         }
         var list = new ArrayList<Cell>();
-        var deltaJ = cell2.getPosition().j() > cell1.getPosition().j() ? 1 : -1;
+
+        int deltaJ;
+        if (cell2.getPosition().j() > cell1.getPosition().j()) {
+            deltaJ = 1;
+        } else {
+            deltaJ = -1;
+        }
+
+
         var j = cell1.getPosition().j() + deltaJ;
         for (int i = cell1.getPosition().i() + 1; i < cell2.getPosition().i(); i++) {
             list.add(cells[i][j]);
@@ -62,9 +70,11 @@ public class Board implements Serializable {
 
         return list;
     }
+
     public List<Cell> getAvailableMoves(Cell cell) {
         return getAvailableMoves(cell, false);
     }
+
     public List<Cell> getAvailableEats(Cell cell) {
         return getAvailableMoves(cell, true);
     }
@@ -85,38 +95,38 @@ public class Board implements Serializable {
     private List<Cell> addQueenMoves(Cell cell1, boolean eatsOnly, Player player) {
         var moves = new ArrayList<Cell>();
         var eats = new ArrayList<Cell>();
-        addQueenMove(eats, moves, eatsOnly, cell1, c->c.getUpperLeftCell(player.getDirection()), player);
-        addQueenMove(eats, moves, eatsOnly, cell1, c->c.getUpperRightCell(player.getDirection()), player);
-        addQueenMove(eats, moves, eatsOnly, cell1, c->c.getDownLeftCell(player.getDirection()), player);
-        addQueenMove(eats, moves, eatsOnly, cell1, c->c.getDownRightCell(player.getDirection()), player);
-        if (eats.size() > 0 || eatsOnly){
+        addQueenMove(eats, moves, eatsOnly, cell1, c -> c.getUpperLeftCell(player.getDirection()), player);
+        addQueenMove(eats, moves, eatsOnly, cell1, c -> c.getUpperRightCell(player.getDirection()), player);
+        addQueenMove(eats, moves, eatsOnly, cell1, c -> c.getDownLeftCell(player.getDirection()), player);
+        addQueenMove(eats, moves, eatsOnly, cell1, c -> c.getDownRightCell(player.getDirection()), player);
+        if (eats.size() > 0 || eatsOnly) {
             return eats;
-        }else {
+        } else {
             return moves;
         }
     }
 
     private void addQueenMove(ArrayList<Cell> eats, ArrayList<Cell> moves, boolean eatsOnly, Cell cell1, Function<Cell, Cell> getNeighbour, Player player) {
         var neighbour = cell1;
-        while (true){
-              neighbour = getNeighbour.apply(neighbour);
-              if (neighbour == null){
-                  return;
-              }
-              if (neighbour.hasDraught()){
-                  if (player.isMine(neighbour)){
-                      return;
-                  }
-                  break;
-              }
-              if (!eatsOnly){
-                  moves.add(neighbour);
-              }
-        }
-        while (true){
+        while (true) {
             neighbour = getNeighbour.apply(neighbour);
-            if (neighbour == null || neighbour.hasDraught()){
+            if (neighbour == null) {
+                return;
+            }
+            if (neighbour.hasDraught()) {
+                if (player.isMine(neighbour)) {
                     return;
+                }
+                break;
+            }
+            if (!eatsOnly) {
+                moves.add(neighbour);
+            }
+        }
+        while (true) {
+            neighbour = getNeighbour.apply(neighbour);
+            if (neighbour == null || neighbour.hasDraught()) {
+                return;
             }
             eats.add(neighbour);
         }
@@ -124,59 +134,58 @@ public class Board implements Serializable {
 
     private List<Cell> addDraughtMoves(Cell cell1, boolean eatsOnly, Player player) {
         var cells = new ArrayList<Cell>();
-        addEat(cells, cell1, c->c.getUpperLeftCell(player.getDirection()), player);
-        addEat(cells, cell1, c->c.getUpperRightCell(player.getDirection()), player);
-        addEat(cells, cell1, c->c.getDownLeftCell(player.getDirection()), player);
-        addEat(cells, cell1, c->c.getDownRightCell(player.getDirection()), player);
+        addEat(cells, cell1, c -> c.getUpperLeftCell(player.getDirection()), player);
+        addEat(cells, cell1, c -> c.getUpperRightCell(player.getDirection()), player);
+        addEat(cells, cell1, c -> c.getDownLeftCell(player.getDirection()), player);
+        addEat(cells, cell1, c -> c.getDownRightCell(player.getDirection()), player);
 
-        if (cells.size() > 0){
+        if (cells.size() > 0) {
             eatsOnly = true;
         }
         if (eatsOnly) {
             return cells;
         }
-        addMove(cells, cell1, c->c.getUpperLeftCell(player.getDirection()));
-        addMove(cells, cell1, c->c.getUpperRightCell(player.getDirection()));
+        addMove(cells, cell1, c -> c.getUpperLeftCell(player.getDirection()));
+        addMove(cells, cell1, c -> c.getUpperRightCell(player.getDirection()));
         return cells;
     }
 
-    private void addMove(ArrayList<Cell> cells, Cell cell1, Function<Cell,Cell> getNeighbour) {
+    private void addMove(ArrayList<Cell> cells, Cell cell1, Function<Cell, Cell> getNeighbour) {
 
-        try {
-            var cell2 = getNeighbour.apply(cell1);
-            if (cell2 == null || cell2.hasDraught()) {
-                return;
-            }
-            cells.add(cell2);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+
+        var cell2 = getNeighbour.apply(cell1);
+        if (cell2 == null || cell2.hasDraught()) {
+            return;
         }
+        cells.add(cell2);
+
+
     }
-    private void addEat(ArrayList<Cell> cells, Cell cell1, Function<Cell,Cell> getter, Player player) {
 
-        try {
-            var eaten = getter.apply(cell1);
-            if (eaten == null || eaten.isEmpty() || player.isMine(eaten)){
-                return;
-            }
-            var cell2 = getter.apply(eaten);
-            if (cell2 == null || cell2.hasDraught()) {
-                return;
-            }
-            cells.add(cell2);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+    private void addEat(ArrayList<Cell> cells, Cell cell1, Function<Cell, Cell> getter, Player player) {
+
+
+        var eaten = getter.apply(cell1);
+        if (eaten == null || eaten.isEmpty() || player.isMine(eaten)) {
+            return;
         }
+        var cell2 = getter.apply(eaten);
+        if (cell2 == null || cell2.hasDraught()) {
+            return;
+        }
+        cells.add(cell2);
+
     }
 
     public void undo(MoveStep step) {
         var cell1 = step.getCell1();
         var cell2 = step.getCell2();
-        if (cell1 == null){
-            //start cell
+        if (cell1 == null) {
+
             return;
         }
-        var draught = cell2.removeDraught();
+        var draught = cell2.getDraught();
+        cell2.removeDraught();
         cell1.setDraught(draught);
         if (step.getEatenCell() != null) {
             step.restoreEatenDraught();
@@ -193,11 +202,7 @@ public class Board implements Serializable {
             throw new RuntimeException("wrong distance between cells");
         }
         var cells = getCellsWithDraughtsBetween(cell1, cell2);
-        if (!cell1.getDraught().isQueen() && cells.size()!=1) {
-            throw new RuntimeException("wrong distance between cells");
-        }
-        cells = getCellsWithDraughtsBetween(cell1, cell2);
-        if (cells.size()!=1) {
+        if (cells.size() != 1) {
             throw new RuntimeException("wrong distance between cells");
         }
         return cells.get(0);
@@ -209,7 +214,7 @@ public class Board implements Serializable {
         var draught = cell1.getDraught();
         System.out.println("make move: " + cell1 + "-> " + cell2);
 
-        if (step.getEatenCell()!=null){
+        if (step.getEatenCell() != null) {
             eat(step);
         }
         cell1.removeDraught();
@@ -240,15 +245,15 @@ public class Board implements Serializable {
 
     public void updateAvailableCells(Player player) {
         clearAvailableCells();
-        if (player.getMove().started()){
+        if (player.getMove().started()) {
             addAvailableCells(player.getMove().getLast().getAvailableMoves().stream());
             return;
         }
         var moves = player.getDraughts().stream().map(Draught::getCell).filter(Cell::hasAvailableEats);
-        if (moves.findAny().isEmpty()){
+        if (moves.findAny().isEmpty()) {
             moves = player.getDraughts().stream().map(Draught::getCell).filter(Cell::hasAvailableMoves);
-        }else{
-            moves= player.getDraughts().stream().map(Draught::getCell).filter(Cell::hasAvailableEats);
+        } else {
+            moves = player.getDraughts().stream().map(Draught::getCell).filter(Cell::hasAvailableEats);
         }
         addAvailableCells(moves);
     }
@@ -264,10 +269,5 @@ public class Board implements Serializable {
     public Stream<Cell> getAvailableCells() {
         return Arrays.stream(cells).flatMap(Arrays::stream).filter(Cell::getEnabled);
     }
-
-    public boolean hasAvailableMoves() {
-        return getAvailableCells().findAny().isPresent();
-    }
-
 
 }

@@ -114,14 +114,6 @@ public class Game implements Serializable {
         redrawBoard.run();
     }
 
-    private boolean canStartFrom(Cell cell) {
-        if (!activePlayer.isMine(cell)) {
-            System.out.println("it's not your draught");
-            return false;
-        }
-        return cell.hasAvailableMoves();
-    }
-
 
 
     public void undo(){
@@ -149,7 +141,7 @@ public class Game implements Serializable {
             state = "finished";
             winner = activePlayer;
         }
-        if (getNextPlayer().hasAvailableMoves()) {
+        else if (getNextPlayer().hasAvailableMoves()) {
             toggleActivePlayer();
         } else {
             info(getNextPlayer().getName() + " can't move");
