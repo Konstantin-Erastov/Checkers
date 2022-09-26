@@ -61,7 +61,6 @@ public class Board implements Serializable {
             deltaJ = -1;
         }
 
-
         var j = cell1.getPosition().j() + deltaJ;
         for (int i = cell1.getPosition().i() + 1; i < cell2.getPosition().i(); i++) {
             list.add(cells[i][j]);

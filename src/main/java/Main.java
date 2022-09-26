@@ -9,10 +9,8 @@ public class Main {
     private static Game game = new Game();
     public static void main(String[] args){
 
-
         JFrame.setDefaultLookAndFeelDecorated(true);
         JFrame frame = new JFrame();
-
         frame.setVisible(true);
         var boardPanel = new BoardPanel();
         boardPanel.setGame(game);

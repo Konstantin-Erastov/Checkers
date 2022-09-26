@@ -11,9 +11,7 @@ public class Draught   implements Serializable {
     private final Player player;
     @Setter
     private boolean isQueen = false;
-
     private Cell cell;
-
     public Draught(Player player) {
         this.player = player;
         player.getDraughts().add(this);

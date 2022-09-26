@@ -47,17 +47,6 @@ public class BoardPanel extends JPanel {
 
             }
         });
-        addMouseMotionListener(new MouseMotionListener() { //
-            @Override
-            public void mouseDragged(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseMoved(MouseEvent e) {
-
-            }
-        });
     }
     public void setGame(Game game) {
         this.game = game;

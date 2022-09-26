@@ -96,8 +96,6 @@ public class Game implements Serializable {
 
             return;
         }
-
-
         //move.started
 
         var step = move.addStep(cell);
